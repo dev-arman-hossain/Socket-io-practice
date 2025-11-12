@@ -1,12 +1,21 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import ws from './ws';
 
 export default function App() {
-  const timer = useRef(null);
+  const soket = useRef(null);
   const [userName, setUserName] = useState('');
   const [showNamePopup, setShowNamePopup] = useState(true);
   const [inputName, setInputName] = useState('');
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
+
+
+  useEffect(() => {
+    soket.current =ws()
+  }, []);
+
+
+
 
   // FORMAT TIMESTAMP TO HH:MM
   function formatTime(ts) {

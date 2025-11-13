@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import ws from './ws';
 
 export default function App() {
-  const soket = useRef(null);
+  const socket = useRef(null);
   const [userName, setUserName] = useState('');
   const [showNamePopup, setShowNamePopup] = useState(true);
   const [inputName, setInputName] = useState('');
@@ -11,7 +11,13 @@ export default function App() {
 
 
   useEffect(() => {
-    soket.current =ws()
+    socket.current =ws();
+    socket.current.on('connect', () => {
+     socket.current.on("roomNotice", (userName)=>{
+      console.log(`${userName} joined to group!`);
+      
+     })
+    })
   }, []);
 
 
@@ -30,6 +36,9 @@ export default function App() {
     e.preventDefault();
     const trimmed = inputName.trim();
     if (!trimmed) return;
+
+    // join room
+    socket.current.emit('joinRoom', trimmed);
 
     setUserName(trimmed);
     setShowNamePopup(false);

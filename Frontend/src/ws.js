@@ -2,7 +2,7 @@ import {io} from "socket.io-client";
 
 
 const ws = () => {
-        return io("https://backend-ten-gilt-98.vercel.app");
+        return io("https://socket-io-practice-oyuk.onrender.com");
 }
 
 export default ws

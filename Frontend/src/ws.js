@@ -1,8 +1,7 @@
-import {io} from "socket.io-client";
-
+import { io } from "socket.io-client";
 
 const ws = () => {
-        return io("http://localhost:3000");
-}
+  return io("https://backend-ten-gilt-98.vercel.app");
+};
 
-export default ws
+export default ws;

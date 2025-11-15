@@ -36,12 +36,15 @@ io.on("connection", (socket) => {
   socket.on("stopTyping", (userName) => {
     socket.to(Room).emit("stopTyping", userName);
   });
+  
 });
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello world</h1>");
 });
 
-server.listen(3000, () => {
-  console.log("server running at http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
+

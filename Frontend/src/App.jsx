@@ -30,6 +30,12 @@ export default function App() {
         setTypingUsers((prev) => prev.filter((u) => u !== userName));
       });
     });
+    return () => {
+      socket.current.off("roomNotice");
+      socket.current.off("chatMessage");
+      socket.current.off("typing");
+      socket.current.off("stopTyping");
+    }
   }, []);
 
   useEffect(() => {

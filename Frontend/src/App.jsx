@@ -26,6 +26,9 @@ export default function App() {
           return [...prev, userName];
         });
       });
+      socket.current.on("stopTyping", (userName) => {
+        setTypingUsers((prev) => prev.filter((u) => u !== userName));
+      });
     });
   }, []);
 
@@ -35,7 +38,7 @@ export default function App() {
 
       setTimeout(() => {
         socket.current.emit("stopTyping", userName);
-      }, 1000);
+      }, 3000);
     }
   }, [text, userName]);
 

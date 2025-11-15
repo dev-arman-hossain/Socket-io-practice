@@ -1,33 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
-import ws from './ws';
+import { useState, useRef, useEffect } from "react";
+import ws from "./ws";
 
 export default function App() {
   const socket = useRef(null);
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const [showNamePopup, setShowNamePopup] = useState(true);
-  const [inputName, setInputName] = useState('');
+  const [inputName, setInputName] = useState("");
   const [messages, setMessages] = useState([]);
-  const [text, setText] = useState('');
-
+  const [text, setText] = useState("");
 
   useEffect(() => {
-    socket.current =ws();
-    socket.current.on('connect', () => {
-     socket.current.on("roomNotice", (userName)=>{
-      console.log(`${userName} joined to group!`);
-      
-     })
-    })
+    socket.current = ws();
+    socket.current.on("connect", () => {
+      socket.current.on("roomNotice", (userName) => {
+        console.log(`${userName} joined to group!`);
+      });
+      socket.current.on("chatMessage", (msg) => {
+        console.log(msg);
+        setMessages((prev) => [...prev, msg]);
+      });
+    });
   }, []);
-
-
-
 
   // FORMAT TIMESTAMP TO HH:MM
   function formatTime(ts) {
     const d = new Date(ts);
-    const hh = String(d.getHours()).padStart(2, '0');
-    const mm = String(d.getMinutes()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
     return `${hh}:${mm}`;
   }
 
@@ -38,7 +37,7 @@ export default function App() {
     if (!trimmed) return;
 
     // join room
-    socket.current.emit('joinRoom', trimmed);
+    socket.current.emit("joinRoom", trimmed);
 
     setUserName(trimmed);
     setShowNamePopup(false);
@@ -56,12 +55,14 @@ export default function App() {
       ts: Date.now(),
     };
     setMessages((m) => [...m, msg]);
-    setText('');
+
+    socket.current.emit("chatMessage", msg);
+    setText("");
   }
 
   // HANDLE ENTER KEY
   function handleKeyDown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -73,9 +74,12 @@ export default function App() {
       {showNamePopup && (
         <div className="fixed inset-0 flex items-center justify-center z-40">
           <div className="bg-white rounded-xl shadow-lg max-w-md p-6">
-            <h1 className="text-xl font-semibold text-black">Enter your name</h1>
+            <h1 className="text-xl font-semibold text-black">
+              Enter your name
+            </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Enter your name to start chatting. This will be used to identify you in chat.
+              Enter your name to start chatting. This will be used to identify
+              you in chat.
             </p>
             <form onSubmit={handleNameSubmit} className="mt-4">
               <input
@@ -110,8 +114,10 @@ export default function App() {
               </div>
             </div>
             <div className="text-sm text-gray-500">
-              Signed in as{' '}
-              <span className="font-medium text-[#303030] capitalize">{userName}</span>
+              Signed in as{" "}
+              <span className="font-medium text-[#303030] capitalize">
+                {userName}
+              </span>
             </div>
           </div>
 
@@ -120,15 +126,20 @@ export default function App() {
             {messages.map((m) => {
               const mine = m.sender === userName;
               return (
-                <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  key={m.id}
+                  className={`flex ${mine ? "justify-end" : "justify-start"}`}
+                >
                   <div
                     className={`max-w-[78%] p-3 my-2 rounded-[18px] text-sm leading-5 shadow-sm ${
                       mine
-                        ? 'bg-[#DCF8C6] text-[#303030] rounded-br-2xl'
-                        : 'bg-white text-[#303030] rounded-bl-2xl'
+                        ? "bg-[#DCF8C6] text-[#303030] rounded-br-2xl"
+                        : "bg-white text-[#303030] rounded-bl-2xl"
                     }`}
                   >
-                    <div className="break-words whitespace-pre-wrap">{m.text}</div>
+                    <div className="break-words whitespace-pre-wrap">
+                      {m.text}
+                    </div>
                     <div className="flex justify-between items-center mt-1 gap-16">
                       <div className="text-[11px] font-bold">{m.sender}</div>
                       <div className="text-[11px] text-gray-500 text-right">

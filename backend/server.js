@@ -24,6 +24,12 @@ io.on('connection', (socket) => {
       // Notify others in the room
       socket.to(Room).emit('roomNotice', userName);
     });
+
+    //msg recieve
+    socket.on('chatMessage', (msg) => {
+   socket.to(Room).emit('chatMessage', msg);
+  });
+
 });
 
 app.get('/', (req, res) => {

@@ -9,6 +9,7 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [typingUsers, setTypingUsers] = useState([]);
+  const lastMessageRef = useRef(null);
 
   useEffect(() => {
     socket.current = ws();
@@ -47,6 +48,12 @@ export default function App() {
       }, 3000);
     }
   }, [text, userName]);
+
+  useEffect(() => {
+  if (lastMessageRef.current) {
+    lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [messages]);
 
   // FORMAT TIMESTAMP TO HH:MM
   function formatTime(ts) {
@@ -156,7 +163,7 @@ export default function App() {
           </div>
           {/* MESSAGE LIST */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-100 flex flex-col">
-            {messages.map((m) => {
+            {messages.map((m, index) => {
               const mine = m.sender === userName;
               return (
                 <div
@@ -180,6 +187,9 @@ export default function App() {
                       </div>
                     </div>
                   </div>
+                  {index === messages.length - 1 && (
+                    <div ref={lastMessageRef} />
+                  )}
                 </div>
               );
             })}
